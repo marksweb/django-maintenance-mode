@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
 try:
@@ -25,6 +24,7 @@ from django.utils.module_loading import import_string
 from functools import wraps
 
 from maintenance_mode.backends import AbstractStateBackend
+from maintenance_mode.conf import settings
 
 
 def get_maintenance_mode_backend():

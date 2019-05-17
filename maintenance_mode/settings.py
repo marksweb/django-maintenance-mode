@@ -1,66 +1,33 @@
 # -*- coding: utf-8 -*-
-
 from django.conf import settings
-from django.utils.module_loading import import_module
-
-import os
 
 
-if not hasattr(settings, 'MAINTENANCE_MODE'):
-    settings.MAINTENANCE_MODE = None
+class Settings(object):
+    """Lazy settings wrapper, for use in app-specific conf.py files"""
 
-if not hasattr(settings, 'MAINTENANCE_MODE_GET_CLIENT_IP_ADDRESS'):
-    settings.MAINTENANCE_MODE_GET_CLIENT_IP_ADDRESS = None
+    def __init__(self, defaults):
+        """
+        Constructor
 
-if not hasattr(settings, 'MAINTENANCE_MODE_GET_TEMPLATE_CONTEXT'):
-    settings.MAINTENANCE_MODE_GET_TEMPLATE_CONTEXT = None
+        :param defaults: default values for settings, will be return if
+                         not overridden in the project settings
+        :type defaults: dict
+        """
+        self.defaults = defaults
 
-if not hasattr(settings, 'MAINTENANCE_MODE_IGNORE_ADMIN_SITE'):
-    settings.MAINTENANCE_MODE_IGNORE_ADMIN_SITE = None
+    def __getattr__(self, name):
+        """
+        Return the setting with the specified name, from the project settings
+        (if overridden), else from the default values passed in during
+        construction.
 
-if not hasattr(settings, 'MAINTENANCE_MODE_IGNORE_ANONYMOUS_USER'):
-    settings.MAINTENANCE_MODE_IGNORE_ANONYMOUS_USER = False
-
-if not hasattr(settings, 'MAINTENANCE_MODE_IGNORE_AUTHENTICATED_USER'):
-    settings.MAINTENANCE_MODE_IGNORE_AUTHENTICATED_USER = False
-
-if not hasattr(settings, 'MAINTENANCE_MODE_IGNORE_IP_ADDRESSES'):
-    settings.MAINTENANCE_MODE_IGNORE_IP_ADDRESSES = None
-
-if not hasattr(settings, 'MAINTENANCE_MODE_IGNORE_STAFF'):
-    settings.MAINTENANCE_MODE_IGNORE_STAFF = False
-
-if not hasattr(settings, 'MAINTENANCE_MODE_IGNORE_SUPERUSER'):
-    settings.MAINTENANCE_MODE_IGNORE_SUPERUSER = False
-
-if not hasattr(settings, 'MAINTENANCE_MODE_IGNORE_TESTS'):
-    settings.MAINTENANCE_MODE_IGNORE_TESTS = False
-
-if not hasattr(settings, 'MAINTENANCE_MODE_IGNORE_URLS'):
-    settings.MAINTENANCE_MODE_IGNORE_URLS = None
-
-if not hasattr(settings, 'MAINTENANCE_MODE_REDIRECT_URL'):
-    settings.MAINTENANCE_MODE_REDIRECT_URL = None
-
-if not hasattr(settings, 'MAINTENANCE_MODE_STATE_BACKEND'):
-    settings.MAINTENANCE_MODE_STATE_BACKEND = 'maintenance_mode.backends.LocalFileBackend'
-
-if not hasattr(settings, 'MAINTENANCE_MODE_STATE_FILE_NAME'):
-    settings.MAINTENANCE_MODE_STATE_FILE_NAME = 'maintenance_mode_state.txt'
-
-if not hasattr(settings, 'MAINTENANCE_MODE_STATE_FILE_PATH'):
-    settings_module = import_module(os.environ['DJANGO_SETTINGS_MODULE'])
-    settings_path = settings_module.__file__
-    settings_dir = os.path.dirname(settings_path)
-    settings.MAINTENANCE_MODE_STATE_FILE_PATH = os.path.abspath(
-        os.path.join(os.sep, settings_dir,
-            settings.MAINTENANCE_MODE_STATE_FILE_NAME))
-
-if not hasattr(settings, 'MAINTENANCE_MODE_TEMPLATE'):
-    settings.MAINTENANCE_MODE_TEMPLATE = '503.html'
-
-if not hasattr(settings, 'MAINTENANCE_MODE_STATUS_CODE'):
-    settings.MAINTENANCE_MODE_STATUS_CODE = 503
-
-if not hasattr(settings, 'MAINTENANCE_MODE_RETRY_AFTER'):
-    settings.MAINTENANCE_MODE_RETRY_AFTER = 3600
+        :param name: name of the setting to return
+        :type name: str or unicode
+        :return: the named setting
+        :raises: AttributeError -- if the named setting is not found
+        """
+        if hasattr(settings, name):
+            return getattr(settings, name)
+        if name in self.defaults:
+            return self.defaults[name]
+        raise AttributeError("'{name}' setting not found".format(name=name))

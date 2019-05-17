@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import django
-from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
 if django.VERSION < (2, 0):
@@ -16,6 +15,7 @@ from django.template import RequestContext
 from django.utils.cache import add_never_cache_headers
 from django.utils.module_loading import import_string
 
+from maintenance_mode.conf import settings
 from maintenance_mode.core import get_maintenance_mode
 from maintenance_mode.utils import get_client_ip_address
 

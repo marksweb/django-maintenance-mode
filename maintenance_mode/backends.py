@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.conf import settings
-
+from maintenance_mode.conf import settings
 from maintenance_mode.io import read_file, write_file
 
 

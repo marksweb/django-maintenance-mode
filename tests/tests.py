@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import django
-from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management import call_command
@@ -16,6 +15,7 @@ else:
 
 from maintenance_mode import (
     backends, core, http, io, middleware, utils, version, views, )
+from maintenance_mode.conf import settings
 from maintenance_mode.management.commands.maintenance_mode import (
     Command as MaintenanceModeCommand, )
 
